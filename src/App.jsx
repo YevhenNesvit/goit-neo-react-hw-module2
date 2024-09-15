@@ -1,27 +1,23 @@
 import { useState, useEffect } from "react";
 import Feedback from "./components/Feedback/Feedback";
 import Options from "./components/Options/Options";
-import Notification from "./components/Description/Description";
-import "./App.css"; // Перевірте шлях і наявність цього файлу
+import Notification from "./components/Notification/Notification";
+import "./App.css";
 
 const App = () => {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  // Initialize state with values from localStorage or default to 0
+  const [feedback, setFeedback] = useState(() => {
+    const savedFeedback = JSON.parse(localStorage.getItem('feedback'));
+    return savedFeedback || {
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    };
   });
-
-  // Load saved feedback from localStorage on component mount
-  useEffect(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem("feedback"));
-    if (savedFeedback) {
-      setFeedback(savedFeedback);
-    }
-  }, []);
 
   // Save feedback to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("feedback", JSON.stringify(feedback));
+    localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
 
   const updateFeedback = (feedbackType) => {
@@ -39,25 +35,19 @@ const App = () => {
     });
   };
 
-  // Calculate total feedback and positive feedback percentage (including neutral)
+  // Calculate total feedback and positive feedback percentage
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
-  const positiveFeedback = feedback.good + feedback.neutral; // Include neutral in positive feedback
-  const positivePercentage =
-    totalFeedback > 0
-      ? Math.round((positiveFeedback / totalFeedback) * 100)
-      : 0;
+  const positiveFeedback = feedback.good; // Only good feedback is considered positive
+  const positivePercentage = totalFeedback > 0 ? Math.round((positiveFeedback / totalFeedback) * 100) : 0;
 
   return (
     <div>
       <h1>Sip Happens Café</h1>
-      <p>
-        Please leave your feedback about our service by selecting one of the
-        options below.
-      </p>
+      <p>Please leave your feedback about our service by selecting one of the options below.</p>
       <Options
         updateFeedback={updateFeedback}
         resetFeedback={resetFeedback}
-        totalFeedback={totalFeedback} // Total feedback including neutral
+        totalFeedback={totalFeedback}
       />
       {totalFeedback > 0 ? (
         <Feedback
