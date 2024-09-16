@@ -11,7 +11,7 @@ const Options = ({ updateFeedback, totalFeedback, resetFeedback }) => {
           Reset
         </button>
       ) : (
-        <p>No feedback yet</p>
+        null
       )}
     </div>
   );
